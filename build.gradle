@@ -39,6 +39,7 @@ allprojects {
         daggerVersion = '2.8'
         retrofitVersion = '2.3.0'
         okHttpVersion = '3.8.1'
+        daggerVersion = "2.9"
     }
 }
 

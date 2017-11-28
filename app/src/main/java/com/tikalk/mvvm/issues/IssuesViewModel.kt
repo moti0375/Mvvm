@@ -5,6 +5,7 @@ import com.tikalk.mvvm.model.ApiResponse
 import com.tikalk.mvvm.model.User
 import com.tikalk.mvvm.repository.Repository
 import com.tikalk.mvvm.repository.IssuesRepository
+import javax.inject.Inject
 
 /**
  * Created by motibartov on 28/11/2017.
@@ -14,9 +15,10 @@ class IssuesViewModel : ViewModel {
     val apiResponse : MediatorLiveData<ApiResponse>
     val repository : Repository
 
-    constructor(){  //No arguments constructor
+    @Inject
+    constructor(repo: Repository){  //No arguments constructor
         apiResponse = MediatorLiveData()
-        repository = IssuesRepository()
+        repository = repo
     }
 
 
