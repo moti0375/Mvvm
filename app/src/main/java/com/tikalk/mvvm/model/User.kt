@@ -1,7 +1,7 @@
 package com.tikalk.mvvm.model
 
-/**
- * Created by motibartov on 28/11/2017.
- */
+import android.arch.persistence.room.Entity
 
-data class User(val id: Int, val login: String)
+
+@Entity(tableName = "users")
+data class User(val id: Int = 0, var name: String = "")

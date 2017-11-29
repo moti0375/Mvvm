@@ -2,20 +2,23 @@ package com.tikalk.mvvm
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.tikalk.mvvm.issues.IssuesViewModel
 import com.tikalk.mvvm.issues.IssuesVmFactory
+import com.tikalk.mvvm.model.Issue
+import com.tikalk.mvvm.model.IssuesJsonDesrializer
 import com.tikalk.mvvm.network.GitHubApiService
 import com.tikalk.mvvm.repository.IssuesRepository
 import com.tikalk.mvvm.repository.Repository
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-/**
- * Created by motibartov on 28/11/2017.
- */
+
 @Module
 class AppModule {
 
@@ -26,9 +29,10 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideGithubApiService() : GitHubApiService{
+    fun provideGithubApiService(gson : Gson) : GitHubApiService{
         return Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .baseUrl(BASE_URL)
                 .build().create(GitHubApiService::class.java)
 
@@ -36,7 +40,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideRepsitory(issuesRepository: IssuesRepository) : Repository{
+    fun provideRepository(issuesRepository: IssuesRepository) : Repository{
         return issuesRepository
     }
 
@@ -49,6 +53,16 @@ class AppModule {
     @Singleton
     fun provideViewModelFactory(factory: IssuesVmFactory) : ViewModelProvider.Factory{
         return factory
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideGson() : Gson{
+        val gsonBuilder = GsonBuilder()
+        gsonBuilder.registerTypeHierarchyAdapter(Issue::class.java, IssuesJsonDesrializer())
+        return gsonBuilder.create()
+
     }
 
 

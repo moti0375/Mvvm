@@ -9,31 +9,23 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 
-/**
- * Created by motibartov on 28/11/2017.
- */
-class IssuesRepository @Inject constructor(): Repository {
 
+class IssuesRepository @Inject constructor(gitHubApiService: GitHubApiService, database: Database): Repository {
 
+//    val roomDatabase : Database
     companion object {
         val baseUrl = "https://api.github.com/"
+
     }
 
     val githubApiService: GitHubApiService
+    val issuesDatabase : Database
 
     init {
-        val retrofit = Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
-
-        githubApiService = retrofit.create(GitHubApiService::class.java)
+        githubApiService = gitHubApiService
+        issuesDatabase = database
     }
 
     override fun getIssues(owner: String, repo: String): LiveData<ApiResponse> {
@@ -45,6 +37,9 @@ class IssuesRepository @Inject constructor(): Repository {
                 .subscribe(object : DisposableObserver<List<Issue>>() {
                     override fun onNext(t: List<Issue>) {
                         liveDate.value = ApiResponse(t)
+                        val issues = liveDate.value?.issues
+
+                        issuesDatabase.getIssueDao().insertIssues(issues)
                     }
 
                     override fun onError(e: Throwable) {

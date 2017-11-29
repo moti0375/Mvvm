@@ -1,19 +1,15 @@
 package com.tikalk.mvvm.issues
 
 import android.app.Activity
-import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
 import com.tikalk.mvvm.R
 import com.tikalk.mvvm.model.Issue
 import kotlinx.android.synthetic.main.issue_list_item.view.*
 
-/**
- * Created by motibartov on 28/11/2017.
- */
+
 class IssuesAdapter(private val mContext: Activity) : RecyclerView.Adapter<IssuesAdapter.IssuesViewHolder>() {
 
     var issues = ArrayList<Issue>()
@@ -43,7 +39,7 @@ class IssuesAdapter(private val mContext: Activity) : RecyclerView.Adapter<Issue
     class IssuesViewHolder(var item: View) : RecyclerView.ViewHolder(item){
         fun bind(issue: Issue){
             item.tvTitle.text = issue.title
-            item.tvCreator.text = issue.user.login
+            item.tvCreator.text = issue.userName
             item.tvIssueId.text = "${issue.id}"
         }
     }
